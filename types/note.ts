@@ -4,7 +4,5 @@ export interface Note {
   content: string; // Текст нотатки
   createdAt: string; // Дата створення
   updatedAt: string; // Дата останнього оновлення
-  tag: NoteTag;
+  tag: string;
 }
-
-export type NoteTag = "Todo" | "Work" | "Personal" | "Meeting" | "Shopping";

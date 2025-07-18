@@ -1,15 +1,12 @@
-import NoteList from "@/components/NoteList/NoteList";
-import { getNotes } from "@/lib/api";
+import NotesClient from './Notes.client';
+import { fetchNotes } from '@/lib/api';
 
-const Notes = async () => {
-  const response = await getNotes();
-
-  return (
-    <section>
-      <h1>Notes List</h1>
-      {response?.notes?.length > 0 && <NoteList notes={response.notes} />}
-    </section>
-  );
+export default async function NotesPage() {
+  try {
+    const { notes } = await fetchNotes(1, 100, '');
+    return <NotesClient notes={notes} />;
+  } catch (error) {
+    console.error('Failed to fetch notes:', error);
+    return <div>Unable to load notes.</div>;
+  }
 }
-
-export default Notes;
