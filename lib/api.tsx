@@ -1,101 +1,68 @@
 import axios from 'axios';
-import { Note } from '@/types/note';
+import { Note, NewNoteContent } from '@/types/note';
+import toast from 'react-hot-toast';
 
-const BASE_URL = 'https://notehub-public.goit.study/api';
-const axiosInstance = axios.create({
-  baseURL: BASE_URL,
-  headers: {
-    'Content-Type': 'application/json'
-  }
-});
 
-// Перехватчик для добавления токена
-axiosInstance.interceptors.request.use((config) => {
-  const token = process.env.NEXT_PUBLIC_NOTEHUB_TOKEN;
-  if (!token) {
-    throw new Error('API token is missing');
-  }
-  config.headers.Authorization = `Bearer ${token}`;
-  return config;
-});
+axios.defaults.baseURL = 'https://notehub-public.goit.study/api';
+axios.defaults.headers.common['Authorization'] = `Bearer ${process.env.NEXT_PUBLIC_NOTEHUB_TOKEN}`;
+axios.defaults.headers.common['Content-Type'] = 'application/json';
 
-interface FetchParams {
-  search?: string;
-  page?: number;
-  per_page?: number;
-}
-
-interface NotesResponse {
+interface FetchNotesResponse {
   notes: Note[];
   totalPages: number;
 }
 
-interface CreateNotePayload {
-  title: string;
-  content: string;
-  tag: string;
+interface FetchNotesParams {
+  page: number;
+  perPage: number;
+  search?: string;
 }
 
-// Получение списка заметок
-export const fetchNotes = async (
-  page = 1,
-  perPage = 10,
-  search = ''
-): Promise<NotesResponse> => {
+export const fetchNotes = async (search: string = '', page: number = 1): Promise<FetchNotesResponse> => {
   try {
-    const params: FetchParams = {
-      ...(search.trim() && { search: search.trim() }),
+    const params: FetchNotesParams = {
       page,
-      per_page: perPage
+      perPage: 12,
+      ...(search.trim() && { search: search.trim() })
     };
 
-    const res = await axiosInstance.get<NotesResponse>('/notes', { params });
-    return res.data;
+    const response = await axios.get<FetchNotesResponse>('/notes', { params });
+    return response.data;
   } catch (error) {
-    if (axios.isAxiosError(error)) {
-      if (error.response?.status === 403) {
-        throw new Error('Access denied. Check your token permissions.');
-      }
-      throw new Error(`API error: ${error.response?.data?.message || error.message}`);
-    }
-    throw new Error('Network error. Please try again later.');
+    const message = error instanceof Error ? error.message : 'Failed to fetch notes';
+    toast.error(message);
+    throw error;
   }
 };
 
-// Получение конкретной заметки
 export const fetchNoteById = async (id: number): Promise<Note> => {
   try {
-    const { data } = await axiosInstance.get<Note>(`/notes/${id}`);
-    return data;
+    const response = await axios.get<Note>(`/notes/${id}`);
+    return response.data;
   } catch (error) {
-    if (axios.isAxiosError(error)) {
-      throw new Error(error.response?.data?.message || 'Failed to fetch note');
-    }
-    throw new Error('Network error while fetching note');
+    const message = error instanceof Error ? error.message : 'Failed to fetch note';
+    toast.error(message);
+    throw error;
   }
 };
 
-// Создание новой заметки (эта функция отсутствовала)
-export const createNote = async (note: CreateNotePayload): Promise<Note> => {
+export const createNote = async (note: NewNoteContent): Promise<Note> => {
   try {
-    const { data } = await axiosInstance.post<Note>('/notes', note);
-    return data;
+    const response = await axios.post<Note>('/notes', note);
+    return response.data;
   } catch (error) {
-    if (axios.isAxiosError(error)) {
-      throw new Error(error.response?.data?.message || 'Failed to create note');
-    }
-    throw new Error('Network error while creating note');
+    const message = error instanceof Error ? error.message : 'Failed to create note';
+    toast.error(message);
+    throw error;
   }
 };
 
-// Удаление заметки
-export const deleteNote = async (id: string): Promise<void> => {
+export const deleteNote = async (id: number): Promise<void> => {
   try {
-    await axiosInstance.delete(`/notes/${id}`);
+    await axios.delete(`/notes/${id}`);
   } catch (error) {
-    if (axios.isAxiosError(error)) {
-      throw new Error(error.response?.data?.message || 'Failed to delete note');
-    }
-    throw new Error('Network error while deleting note');
+    const message = error instanceof Error ? error.message : 'Failed to delete note';
+    toast.error(message);
+    throw error;
   }
 };
