@@ -4,6 +4,7 @@ import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { createNote } from '@/lib/api';
 import css from './NoteForm.module.css';
+import { NewNoteContent } from '@/types/note';
 
 interface NoteFormProps {
   onClose: () => void;
@@ -20,11 +21,12 @@ const validationSchema = Yup.object({
     .required('Tag is required'),
 });
 
+const initialValues: NewNoteContent = { title: '', content: '', tag: 'Todo'}
 export default function NoteForm({ onClose }: NoteFormProps) {
   const queryClient = useQueryClient();
 
   const mutation = useMutation({
-    mutationFn: (values: { title: string; content: string; tag: string }) =>
+    mutationFn: (values: NewNoteContent ) =>
       createNote(values),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['notes'] });
@@ -34,9 +36,9 @@ export default function NoteForm({ onClose }: NoteFormProps) {
 
   return (
     <Formik
-      initialValues={{ title: '', content: '', tag: '' }}
+      initialValues={initialValues}
       validationSchema={validationSchema}
-      onSubmit={(values: { title: string; content: string; tag: string }) =>
+      onSubmit={(values: NewNoteContent) =>
         mutation.mutate(values)
       }
     >

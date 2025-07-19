@@ -30,7 +30,7 @@ export const fetchNotes = async (search: string = '', page: number = 1): Promise
     return response.data;
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Failed to fetch notes';
-    toast.error(message);
+    //toast.error(message);
     throw error;
   }
 };
