@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { Note, NewNoteContent } from '@/types/note';
-import toast from 'react-hot-toast';
+
 
 
 axios.defaults.baseURL = 'https://notehub-public.goit.study/api';
@@ -29,8 +29,6 @@ export const fetchNotes = async (search: string = '', page: number = 1): Promise
     const response = await axios.get<FetchNotesResponse>('/notes', { params });
     return response.data;
   } catch (error) {
-    const message = error instanceof Error ? error.message : 'Failed to fetch notes';
-    //toast.error(message);
     throw error;
   }
 };
@@ -40,8 +38,6 @@ export const fetchNoteById = async (id: number): Promise<Note> => {
     const response = await axios.get<Note>(`/notes/${id}`);
     return response.data;
   } catch (error) {
-    const message = error instanceof Error ? error.message : 'Failed to fetch note';
-    toast.error(message);
     throw error;
   }
 };
@@ -51,8 +47,6 @@ export const createNote = async (note: NewNoteContent): Promise<Note> => {
     const response = await axios.post<Note>('/notes', note);
     return response.data;
   } catch (error) {
-    const message = error instanceof Error ? error.message : 'Failed to create note';
-    toast.error(message);
     throw error;
   }
 };
@@ -61,8 +55,6 @@ export const deleteNote = async (id: number): Promise<void> => {
   try {
     await axios.delete(`/notes/${id}`);
   } catch (error) {
-    const message = error instanceof Error ? error.message : 'Failed to delete note';
-    toast.error(message);
     throw error;
   }
 };
