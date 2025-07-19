@@ -9,7 +9,7 @@ const axiosInstance = axios.create({
   }
 });
 
-// Улучшенный перехватчик
+// Перехватчик для добавления токена
 axiosInstance.interceptors.request.use((config) => {
   const token = process.env.NEXT_PUBLIC_NOTEHUB_TOKEN;
   if (!token) {
@@ -30,6 +30,13 @@ interface NotesResponse {
   totalPages: number;
 }
 
+interface CreateNotePayload {
+  title: string;
+  content: string;
+  tag: string;
+}
+
+// Получение списка заметок
 export const fetchNotes = async (
   page = 1,
   perPage = 10,
@@ -55,4 +62,40 @@ export const fetchNotes = async (
   }
 };
 
-// Остальные функции остаются без изменений
+// Получение конкретной заметки
+export const fetchNoteById = async (id: number): Promise<Note> => {
+  try {
+    const { data } = await axiosInstance.get<Note>(`/notes/${id}`);
+    return data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.response?.data?.message || 'Failed to fetch note');
+    }
+    throw new Error('Network error while fetching note');
+  }
+};
+
+// Создание новой заметки (эта функция отсутствовала)
+export const createNote = async (note: CreateNotePayload): Promise<Note> => {
+  try {
+    const { data } = await axiosInstance.post<Note>('/notes', note);
+    return data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.response?.data?.message || 'Failed to create note');
+    }
+    throw new Error('Network error while creating note');
+  }
+};
+
+// Удаление заметки
+export const deleteNote = async (id: string): Promise<void> => {
+  try {
+    await axiosInstance.delete(`/notes/${id}`);
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.response?.data?.message || 'Failed to delete note');
+    }
+    throw new Error('Network error while deleting note');
+  }
+};
