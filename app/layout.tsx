@@ -21,7 +21,8 @@ export const metadata: Metadata = {
 // Компоненты ..
 
 import Header from "../components/Header/Header";
-import Footer from "../components/Footer/Footer";
+//  import Footer from "../components/Footer/Footer"; // Закоментовано, оскільки не використовується
+
 
 export default function RootLayout({
   children
