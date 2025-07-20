@@ -12,6 +12,8 @@ export default function Pagination({
   totalPages,
   onChangePage,
 }: PaginationProps) {
+
+    
   return (
     <ReactPaginate
       pageCount={totalPages}
