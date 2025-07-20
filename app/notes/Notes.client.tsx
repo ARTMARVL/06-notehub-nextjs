@@ -5,8 +5,8 @@ import css from "./NotesPage.module.css";
 import NoteModal from "@/components/NoteModal/NoteModal";
 import Pagination from "@/components/Pagination/Pagination";
 import SearchBox from "@/components/SearchBox/SearchBox";
-import { fetchNotes, NotesResponse } from "@/lib/api";
 import NoteList from "@/components/NoteList/NoteList";
+import { fetchNotes, NotesResponse } from "@/lib/api";
 import { useDebounce } from "use-debounce";
 
 interface NotesClientProps {
