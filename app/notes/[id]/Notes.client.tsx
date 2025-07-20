@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { useQuery, keepPreviousData } from "@tanstack/react-query";
-import css from "./NotesPage.module.css";
+import css from "../NotesPage.module.css";
 import NoteModal from "@/components/NoteModal/NoteModal";
 import Pagination from "@/components/Pagination/Pagination";
 import SearchBox from "@/components/SearchBox/SearchBox";
